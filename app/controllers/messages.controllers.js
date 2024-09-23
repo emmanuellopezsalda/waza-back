@@ -4,8 +4,8 @@ import { db } from "../config/db.js";
 export const getMessages = async(req, res) => {
     const {id_chat} = req.params;
     try {
-        const request = await db.query("SELECT * FROM messages WHERE id_chat = ?", [id_chat]);
-        res.json(request[0]);
+        const request = await db.query("CALL SP_GET_CHATS(?)", [id_chat]);
+        res.json(request[0][0]);
     } catch (error) {
         res.json(error);
     }
@@ -14,9 +14,22 @@ export const getMessages = async(req, res) => {
 export const createMessage = async(req, res) => {
     const {id_chat, id_sender, message} = req.body;
     try {
-        const request = await db.query("INSERT INTO `messages`(`id_chat`, `id_sender`, `message_text`) VALUES (?, ?, ?)", [id_chat, id_sender, message]);
-        res.json({message: "MESSAGE SENT"})
+        const request = await db.query("CALL SP_INSERT_MESSAGE(?,?,?)", [id_chat, id_sender, message]);
+        res.json({
+            id_chat: id_chat,
+            id_sender: id_sender,
+            message: message
+        })
     } catch (error) {
         res.json({error: error.message});
+    }
+}
+export const getLastMessage = async(req, res) => {
+    const {id_chat} = req.params;
+    try {
+        const request = await db.query("CALL SP_LAST_MESSAGE(?)", [id_chat])
+        res.json(request[0][0])
+    } catch (err) {
+        console.error(err);
     }
 }

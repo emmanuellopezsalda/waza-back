@@ -2,8 +2,8 @@ import { db } from "../config/db.js";
 
 export const getUsers = async(req, res) => {
     try {
-        const request = await db.query("SELECT * FROM users");
-        res.json(request[0]);
+        const request = await db.query("CALL SP_GET_USERS()");
+        res.json(request[0][0]);
     } catch (err) {
         res.json(err);
     }
