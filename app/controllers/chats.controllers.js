@@ -9,7 +9,9 @@ export const getChats = async(req, res) => {
         res.json({ error });
     }
 }
-
+export const getChatOpen = async (params) => {
+    
+} 
 export const postChat = (req, res) => {
     const {id_user_1, id_user_2} = req.body;
     try {
