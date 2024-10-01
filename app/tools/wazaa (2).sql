@@ -28,7 +28,7 @@ DELIMITER $$
 -- Procedimientos
 --
 DROP PROCEDURE IF EXISTS `SP_GET_CHATS`$$
-CREATE DEFINER=`` PROCEDURE `SP_GET_CHATS` (IN `p_id_chat` INT(11), IN `p_user_id` INT(11))   BEGIN
+CREATE  PROCEDURE `SP_GET_CHATS` (IN `p_id_chat` INT(11), IN `p_user_id` INT(11))   BEGIN
     SELECT 
         m.*, 
         CASE 
@@ -46,7 +46,7 @@ CREATE DEFINER=`` PROCEDURE `SP_GET_CHATS` (IN `p_id_chat` INT(11), IN `p_user_i
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_GET_CHATS_BY_USER`$$
-CREATE DEFINER=`` PROCEDURE `SP_GET_CHATS_BY_USER` (IN `p_user_id` INT)   BEGIN
+CREATE  PROCEDURE `SP_GET_CHATS_BY_USER` (IN `p_user_id` INT)   BEGIN
     SELECT 
         c.id AS chat_id, 
         CASE 
@@ -68,23 +68,24 @@ CREATE DEFINER=`` PROCEDURE `SP_GET_CHATS_BY_USER` (IN `p_user_id` INT)   BEGIN
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_GET_USERS`$$
-CREATE DEFINER=`` PROCEDURE `SP_GET_USERS` ()   BEGIN
+CREATE  PROCEDURE `SP_GET_USERS` ()   BEGIN
     SELECT * FROM users;
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_INSERT_MESSAGE`$$
-CREATE DEFINER=`` PROCEDURE `SP_INSERT_MESSAGE` (IN `p_id_chat` INT, IN `p_id_sender` INT, IN `p_message_text` TEXT)   BEGIN
+CREATE  PROCEDURE `SP_INSERT_MESSAGE` (IN `p_id_chat` INT, IN `p_id_sender` INT, IN `p_message_text` TEXT)   BEGIN
     INSERT INTO messages (id_chat, id_sender, message_text)
     VALUES (p_id_chat, p_id_sender, p_message_text);
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_LAST_MESSAGE`$$
-CREATE DEFINER=`` PROCEDURE `SP_LAST_MESSAGE` (IN `id_chat` INT(11), IN `p_user_id` INT(11))   BEGIN
+CREATE  PROCEDURE `SP_LAST_MESSAGE` (IN `id_chat` INT(11), IN `p_user_id` INT(11))   BEGIN
     -- Traer el último mensaje del chat, ordenado por `sent_at` y el `id` del mensaje
     SELECT 
         m.message_text, 
         m.sent_at, 
-        m.id_sender 
+        m.id_sender,
+        m.id_status 
     FROM 
         messages m 
     INNER JOIN 
@@ -110,21 +111,21 @@ CREATE DEFINER=`` PROCEDURE `SP_LAST_MESSAGE` (IN `id_chat` INT(11), IN `p_user_
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_LOGIN`$$
-CREATE DEFINER=`` PROCEDURE `SP_LOGIN` (IN `_name` VARCHAR(50), IN `_phone` VARCHAR(100))   BEGIN
+CREATE  PROCEDURE `SP_LOGIN` (IN `_name` VARCHAR(50), IN `_phone` VARCHAR(100))   BEGIN
 
 SELECT * FROM users u WHERE u.name = _name AND u.phone_number = _phone;
 
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_MARK_SEEN`$$
-CREATE DEFINER=`` PROCEDURE `SP_MARK_SEEN` (IN `p_id_chat` INT(11), IN `p_id_sender` INT(11))   BEGIN
+CREATE  PROCEDURE `SP_MARK_SEEN` (IN `p_id_chat` INT(11), IN `p_id_sender` INT(11))   BEGIN
 
 UPDATE messages m SET id_status = 1  WHERE m.id_chat = p_id_chat AND m.id_sender = p_id_sender;
 
 END$$
 
 DROP PROCEDURE IF EXISTS `SP_POST_CHAT`$$
-CREATE DEFINER=`` PROCEDURE `SP_POST_CHAT` (IN `p_id_user_1` INT, IN `p_id_user_2` INT)   BEGIN
+CREATE  PROCEDURE `SP_POST_CHAT` (IN `p_id_user_1` INT, IN `p_id_user_2` INT)   BEGIN
     INSERT INTO `chats` (`id_user_1`, `id_user_2`) 
     VALUES (p_id_user_1, p_id_user_2);
 END$$
